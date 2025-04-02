@@ -11,7 +11,7 @@
 #define LCD_CS A3 // Chip Select goes to Analog 3
 #define LCD_CD A2 // Command/Data goes to Analog 2
 #define LCD_WR A1 // LCD Write goes to Analog 1
-#define LCD_RD A0 // LCD Read goes to Analog 0
+#define LCD_RD A0 // LCD Read  goes to Analog 0
 
 #define LCD_RESET A4 // Can alternately just connect to Arduino's reset pin
 
@@ -43,6 +43,7 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
 String messages[16];
 int message_index = 0;
+String ID = "leed2900"; // Example username, needs to be fixed to accept names from users and store them
 
 void setup(void) {
   Serial.begin(9600);
@@ -104,12 +105,9 @@ void loop(void) {
 
   String input = Serial.readString();
 
-  int hours = (millis() / 3600000) % 24;
-  int minutes = (millis() / 60000) % 60;
-  int decaSeconds = (millis()/ 10000) % 10;
-  int seconds = (millis()/1000) % 10;
-  String timestamp = "(" + String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + String(decaSeconds) + String(seconds) + ") ";
-  messages[message_index] = timestamp + input;
+
+  String username = "(" + ID + ") ";
+  messages[message_index] = username + input;
   message_index++;
 
   tft.fillScreen(BLACK);
@@ -124,9 +122,8 @@ void loop(void) {
 
   for (int i = 0; i < message_index; i++) {
     tft.setTextColor(BLUE);  
-    tft.print(messages[i].substring(0, 9)); // Print timestamp in blue
+    tft.print(messages[i].substring(0, ID.length() + 2)); // Print timestamp in blue
     tft.setTextColor(WHITE);  
-    tft.println(messages[i].substring(9)); // Print message in white
+    tft.println(messages[i].substring(ID.length() + 2)); // Print message in white
   }
 }
-
